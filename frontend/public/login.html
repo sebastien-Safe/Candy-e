@@ -219,7 +219,12 @@
       setLoading(true);
       try {
         await login(email, password);
-        window.location.href = 'index.html';
+        const DEMO_EMAILS = ['emilie@safe-digitalisation.fr'];
+        if (DEMO_EMAILS.includes(email.toLowerCase())) {
+          window.location.href = 'role-select.html';
+        } else {
+          window.location.href = 'index.html';
+        }
       } catch (err) {
         const msg = err?.message?.includes('Invalid login')
           ? 'Identifiants incorrects. Veuillez réessayer.'

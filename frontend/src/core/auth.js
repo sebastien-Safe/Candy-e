@@ -59,6 +59,7 @@ export async function logout() {
   if (error) throw error;
   setUser(null);
   setProfile(null);
+  sessionStorage.removeItem('candy_demo_role');
   window.location.href = 'login.html';
 }
 
