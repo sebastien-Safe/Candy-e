@@ -1,0 +1,19 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Supabase open-source repo (développement local uniquement)
+supabase/
+
+# Variables d'environnement
+.env
+.env.local
+.env.*.local
+
+# Logs
+*.log
+
+# Éditeurs
+.vscode/
+.idea/

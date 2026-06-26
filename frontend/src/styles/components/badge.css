@@ -1,0 +1,110 @@
+/* ==============================================================================
+   [ candy-e ] — COMPOSANT BADGE
+   Fichier : styles/components/badge.css
+   ============================================================================== */
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  border-radius: var(--radius-full);
+  font-size: var(--text-xs);
+  font-weight: var(--fw-semibold);
+  white-space: nowrap;
+  line-height: 1.4;
+}
+
+/* Variantes sémantiques */
+.badge--success {
+  background: var(--color-success-light);
+  color: var(--color-success-dark, #166534);
+}
+
+.badge--warning {
+  background: var(--color-warning-light);
+  color: var(--color-warning-dark, #92400e);
+}
+
+.badge--danger {
+  background: var(--color-danger-light);
+  color: var(--color-danger-dark, #991b1b);
+}
+
+.badge--info {
+  background: var(--color-info-light);
+  color: var(--color-info-dark, #075985);
+}
+
+.badge--primary {
+  background: var(--color-primary-light);
+  color: var(--color-primary-dark);
+}
+
+.badge--secondary {
+  background: var(--color-secondary-light);
+  color: var(--color-secondary-dark);
+}
+
+.badge--neutral {
+  background: var(--color-surface-overlay);
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-border);
+}
+
+/* Badge solid (fond plein) */
+.badge--solid-success { background: var(--color-success); color: #fff; }
+.badge--solid-warning { background: var(--color-warning); color: #fff; }
+.badge--solid-danger  { background: var(--color-danger);  color: #fff; }
+.badge--solid-info    { background: var(--color-info);    color: #fff; }
+
+/* Badges de rôles */
+.badge-role {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 8px;
+  border-radius: var(--radius-full);
+  font-size: 11px;
+  font-weight: var(--fw-semibold);
+  color: #fff;
+  white-space: nowrap;
+}
+
+.badge-role--administrateur { background: var(--role-admin); }
+.badge-role--cadre          { background: var(--role-cadre); }
+.badge-role--infirmiere     { background: var(--role-ide); }
+.badge-role--aide_soignante { background: var(--role-as);  color: #1e293b; }
+.badge-role--ash            { background: var(--role-ash); }
+.badge-role--medecin        { background: var(--role-medecin); }
+.badge-role--kine           { background: var(--role-kine); }
+.badge-role--psycho         {
+  background: var(--role-psycho);
+  color: var(--color-text);
+  border: 1px solid var(--color-border-strong);
+}
+.badge-role--ergo           { background: var(--role-ergo); }
+
+/* Indicateur point coloré */
+.role-dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.role-dot--administrateur { background: var(--role-admin); }
+.role-dot--cadre          { background: var(--role-cadre); }
+.role-dot--infirmiere     { background: var(--role-ide); }
+.role-dot--aide_soignante { background: var(--role-as); }
+.role-dot--ash            { background: var(--role-ash); }
+.role-dot--medecin        { background: var(--role-medecin); }
+.role-dot--kine           { background: var(--role-kine); }
+.role-dot--psycho         { background: var(--role-psycho); border: 1px solid var(--color-border-strong); }
+.role-dot--ergo           { background: var(--role-ergo); }
+
+/* Priorité transmission */
+.badge--critique { background: var(--color-danger-light); color: var(--color-danger-dark, #991b1b); }
+.badge--urgente  { background: var(--color-warning-light); color: var(--color-warning-dark, #92400e); }
+.badge--normale  { background: var(--color-info-light); color: var(--color-info-dark, #075985); }
