@@ -3,44 +3,19 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="candy-e — Système d'information de santé EHPAD/SSR" />
   <title>[ candy-e ] — Dashboard</title>
 
-  <!--
-    INFRASTRUCTURE AIR-GAPPED — Aucune dépendance réseau externe.
-    Toutes les ressources sont locales.
-    Supabase JS : /assets/vendor/supabase.min.js (à déposer manuellement, voir README)
-  -->
-
-  <!-- Design System CSS -->
   <link rel="stylesheet" href="../src/styles/main.css" />
-
-  <!-- Supabase JS — bundle UMD local (OBLIGATOIRE avant les modules ES) -->
   <script src="./assets/vendor/supabase.min.js"></script>
 </head>
 <body>
 
   <div class="app-container" id="app">
-
-    <!-- Sidebar de navigation -->
-    <aside class="sidebar" id="sidebar" role="navigation" aria-label="Navigation principale">
-      <!-- Rempli dynamiquement par sidebar.js -->
-    </aside>
-
-    <!-- Overlay mobile pour la sidebar -->
+    <aside class="sidebar" id="sidebar" role="navigation" aria-label="Navigation principale"></aside>
     <div class="sidebar-overlay" id="sidebar-overlay" aria-hidden="true"></div>
-
-    <!-- Zone principale -->
     <div class="main-wrapper">
-
-      <!-- Topbar -->
-      <header class="topbar" id="topbar" role="banner">
-        <!-- Rempli dynamiquement par topbar.js -->
-      </header>
-
-      <!-- Contenu de la page (injecté par le routeur) -->
+      <header class="topbar" id="topbar" role="banner"></header>
       <main class="main-content" id="main-content" role="main" tabindex="-1">
-        <!-- Skeleton de chargement initial -->
         <div style="padding:var(--space-6);">
           <div class="skeleton" style="height:32px;width:200px;margin-bottom:var(--space-3);"></div>
           <div class="skeleton" style="height:16px;width:320px;margin-bottom:var(--space-8);"></div>
@@ -53,52 +28,62 @@
           <div class="skeleton" style="height:280px;border-radius:var(--radius-lg);"></div>
         </div>
       </main>
-
-      <!-- Footer -->
-      <footer class="footer" id="footer" role="contentinfo">
-        <!-- Rempli par footer.js -->
-      </footer>
-
+      <footer class="footer" id="footer" role="contentinfo"></footer>
     </div>
   </div>
 
-  <!-- Conteneur des toasts (notifications) -->
   <div class="toast-container" id="toast-container" role="region" aria-label="Notifications" aria-live="polite"></div>
 
-  <!-- Point d'entrée ES Module de l'application -->
   <script type="module">
-    import { initAuth, requireAuth } from '../src/core/auth.js';
-    import { mountSidebar }          from '../src/layout/sidebar.js';
-    import { mountTopbar }           from '../src/layout/topbar.js';
-    import { mountFooter }           from '../src/layout/footer.js';
-    import { startRouter, route }    from '../src/core/router.js';
-    import { mountDashboard }        from '../src/modules/dashboard/dashboard.js';
-    import { mountPatientList }      from '../src/modules/patient/patient-list.js';
-    import { mountPatientRecord }    from '../src/modules/patient/patient-record.js';
+    import { initAuth, requireAuth }   from '../src/core/auth.js';
+    import { mountSidebar }            from '../src/layout/sidebar.js';
+    import { mountTopbar }             from '../src/layout/topbar.js';
+    import { mountFooter }             from '../src/layout/footer.js';
+    import { startRouter, route }      from '../src/core/router.js';
+    import { mountDashboard }          from '../src/modules/dashboard/dashboard.js';
+    import { mountPatientList }        from '../src/modules/patient/patient-list.js';
+    import { mountPatientRecord }      from '../src/modules/patient/patient-record.js';
+    import { mountAgenda }             from '../src/modules/agenda/agenda.js';
+    import { mountAdmin }              from '../src/modules/admin/admin.js';
+    import { can }                     from '../src/core/rbac.js';
+    import { getRole, subscribe, addNotification, removeNotification } from '../src/core/state.js';
 
-    // 1. Initialiser l'auth (restaure la session + écoute les changements)
+    // 1. Authentification
     await initAuth();
-
-    // 2. Vérifier la session — redirige vers login.html si déconnecté
     const ok = await requireAuth();
-    if (!ok) throw new Error('Redirection vers login');
+    if (!ok) throw new Error('Redirection login');
 
-    // 3. Monter le shell de l'application
+    // 2. Shell
     mountSidebar();
     mountTopbar();
     mountFooter();
 
-    // 4. Déclarer les routes
-    route('dashboard',  () => mountDashboard());
-    route('patients',   () => mountPatientList(), { permission: 'patient.read' });
-    route('patient',    () => mountPatientRecord(), { permission: 'patient.read' });
+    // 3. Système de toasts
+    subscribe('notifications', (notifs) => {
+      const container = document.getElementById('toast-container');
+      if (!container) return;
+      container.innerHTML = notifs.map(n => `
+        <div class="toast toast--${n.type}" data-id="${n.id}">
+          <strong>${n.title}</strong>${n.message ? `<span>${n.message}</span>` : ''}
+        </div>`).join('');
+      container.querySelectorAll('.toast').forEach(t => {
+        setTimeout(() => {
+          removeNotification(t.dataset.id);
+          t.remove();
+        }, 4000);
+      });
+    });
 
-    // Modules données médicales — tous redirigent vers la fiche patient
-    ['etat-civil','constantes','allergies','antecedents','gir',
-     'pathos','directives','protocoles','transmissions','traitements','pansements']
-      .forEach(id => route(id, () => mountPatientRecord(id)));
+    // 4. Routes
+    route('dashboard',     () => mountDashboard());
+    route('patients',      () => mountPatientList(),   { permission: 'patient.read' });
+    route('patient',       () => mountPatientRecord(), { permission: 'patient.read' });
+    route('agenda',        () => mountAgenda(),        { permission: 'agenda.read' });
+    route('consultations', () => mountPatientList(),   { permission: 'consultation.read' });
+    route('ordonnances',   () => mountPatientList(),   { permission: 'ordonnance.read' });
+    route('admin',         () => mountAdmin(),         { permission: 'admin.access' });
 
-    // 5. Démarrer le routeur
+    // 5. Démarrer
     startRouter();
   </script>
 
