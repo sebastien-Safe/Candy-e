@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>[ candy-e ] — Choisir un rôle</title>
+
+  <link rel="stylesheet" href="../src/styles/main.css" />
+  <script src="./assets/vendor/supabase.min.js"></script>
+
+  <style>
+    .role-page {
+      min-height: 100vh;
+      background: var(--color-bg);
+      padding: var(--space-8) var(--space-4);
+    }
+    .role-page__header {
+      text-align: center;
+      margin-bottom: var(--space-8);
+    }
+    .role-logo {
+      width: 56px; height: 56px;
+      border-radius: var(--radius-lg);
+      background: linear-gradient(135deg, var(--color-primary), #7c3aed);
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; font-weight: 700; font-size: 1.25rem;
+      margin: 0 auto var(--space-4);
+    }
+    .role-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: var(--space-4);
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    .role-card {
+      background: var(--color-surface);
+      border: 2px solid var(--color-border);
+      border-radius: var(--radius-xl);
+      padding: var(--space-6) var(--space-4);
+      cursor: pointer;
+      text-align: center;
+      transition: border-color .15s, box-shadow .15s, transform .1s;
+    }
+    .role-card:hover {
+      border-color: var(--color-primary);
+      box-shadow: 0 0 0 3px var(--color-primary-light);
+      transform: translateY(-2px);
+    }
+    .role-card__icon { font-size: 2rem; margin-bottom: var(--space-3); }
+    .role-card__label { font-size: .9375rem; font-weight: 700; color: var(--color-text); }
+    .role-card__desc  { font-size: .75rem; color: var(--color-text-muted); margin-top: .25rem; }
+    .role-section-title {
+      font-size: .6875rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: .08em; color: var(--color-text-muted);
+      max-width: 900px; margin: var(--space-6) auto var(--space-3);
+    }
+    .demo-badge {
+      display: inline-block;
+      background: var(--color-warning-light, #fef9c3);
+      color: var(--color-warning-dark, #854d0e);
+      border: 1px solid var(--color-warning);
+      border-radius: 999px;
+      padding: 4px 12px;
+      font-size: .75rem;
+      font-weight: 600;
+      margin-bottom: var(--space-4);
+    }
+  </style>
+</head>
+<body>
+  <div class="role-page">
+    <div class="role-page__header">
+      <div class="role-logo">ce</div>
+      <h1 style="font-size:var(--text-2xl);font-weight:700;margin-bottom:.5rem;">Mode démo</h1>
+      <div class="demo-badge">🎭 Sélectionne le rôle à simuler</div>
+      <p style="color:var(--color-text-muted);font-size:.875rem;max-width:480px;margin:0 auto;">
+        Chaque rôle donne accès à des modules et permissions différents.
+        Tu peux changer de rôle à tout moment depuis le tableau de bord.
+      </p>
+    </div>
+
+    <div class="role-section-title">Direction & Administration</div>
+    <div class="role-grid" id="grid-admin"></div>
+
+    <div class="role-section-title">Personnel soignant</div>
+    <div class="role-grid" id="grid-soins"></div>
+
+    <div class="role-section-title">Paramédical & Support</div>
+    <div class="role-grid" id="grid-para"></div>
+  </div>
+
+  <script type="module">
+    import { getSession } from '../src/core/auth.js';
+
+    // Vérifier que l'utilisateur est bien connecté
+    const session = await getSession();
+    if (!session) { window.location.href = 'login.html'; }
+
+    const ROLES = [
+      // Administration
+      { id: 'admin_crm',      label: 'Administrateur',    icon: '🛡️',  desc: 'Accès complet — gestion système',           group: 'admin' },
+      { id: 'cadre',          label: 'Cadre de santé',    icon: '📊',  desc: 'Pilotage, planning et coordination',         group: 'admin' },
+      // Soignants
+      { id: 'medecin',        label: 'Médecin',           icon: '🩺',  desc: 'Consultations, ordonnances, dossier complet',group: 'soins' },
+      { id: 'infirmiere',     label: 'Infirmier(e)',       icon: '💉',  desc: 'Soins, transmissions, traitements',          group: 'soins' },
+      { id: 'aide_soignante', label: 'Aide-soignant(e)',  icon: '🤝',  desc: 'Soins de confort, notes de suivi',           group: 'soins' },
+      // Paramédical & support
+      { id: 'kine',           label: 'Kinésithérapeute',  icon: '🏋️',  desc: 'Rééducation et suivi fonctionnel',           group: 'para' },
+      { id: 'psycho',         label: 'Psychologue',       icon: '🧠',  desc: 'Santé mentale et accompagnement',            group: 'para' },
+      { id: 'ergo',           label: 'Ergothérapeute',    icon: '♿',  desc: 'Suivi de l\'autonomie',                      group: 'para' },
+      { id: 'ash',            label: 'ASH',               icon: '🏠',  desc: 'Services hôteliers et logistique',           group: 'para' },
+      { id: 'secretaire',     label: 'Secrétaire',        icon: '📋',  desc: 'Agenda et gestion administrative',           group: 'para' },
+    ];
+
+    const grids = { admin: 'grid-admin', soins: 'grid-soins', para: 'grid-para' };
+
+    ROLES.forEach(role => {
+      const grid = document.getElementById(grids[role.group]);
+      if (!grid) return;
+      const card = document.createElement('div');
+      card.className = 'role-card';
+      card.innerHTML = `
+        <div class="role-card__icon">${role.icon}</div>
+        <div class="role-card__label">${role.label}</div>
+        <div class="role-card__desc">${role.desc}</div>
+      `;
+      card.addEventListener('click', () => {
+        sessionStorage.setItem('candy_demo_role', role.id);
+        window.location.href = 'index.html';
+      });
+      grid.appendChild(card);
+    });
+  </script>
+</body>
+</html>

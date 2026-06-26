@@ -2,7 +2,7 @@
  * [ candy-e ] — TOPBAR
  */
 
-import { getProfile, getTheme, setTheme, toggleSidebar, subscribe } from '../core/state.js';
+import { getProfile, getTheme, setTheme, toggleSidebar, subscribe, getRole, isDemoMode } from '../core/state.js';
 import { logout }       from '../core/auth.js';
 import { formatRole }   from '../utils/format.js';
 import { formatDateLong } from '../utils/date.js';
@@ -29,12 +29,13 @@ function _render(el) {
       <div class="topbar__date" style="font-size:.8125rem;color:var(--color-text-muted);">${today}</div>
     </div>
     <div class="topbar__right">
+      ${isDemoMode() ? _renderDemoBadge() : `
       <div style="display:flex;align-items:center;gap:.5rem;font-size:.75rem;color:var(--color-text-muted);
                   background:var(--color-surface-raised);padding:4px 10px;border-radius:999px;
                   border:1px solid var(--color-border);">
         <span class="status-dot" aria-hidden="true"></span>
         Supabase Cloud
-      </div>
+      </div>`}
       <button class="btn btn--ghost btn--icon" id="btn-theme-toggle"
               aria-label="${theme === 'dark' ? 'Mode clair' : 'Mode sombre'}">
         ${theme === 'dark' ? '☀️' : '🌙'}
@@ -51,6 +52,26 @@ function _render(el) {
   el.querySelector('#btn-logout')?.addEventListener('click', async () => {
     if (confirm('Voulez-vous vraiment vous déconnecter ?')) await logout();
   });
+  el.querySelector('#btn-change-role')?.addEventListener('click', () => {
+    sessionStorage.removeItem('candy_demo_role');
+    window.location.href = 'role-select.html';
+  });
+}
+
+function _renderDemoBadge() {
+  const role = getRole();
+  return `
+    <div style="display:flex;align-items:center;gap:.5rem;">
+      <span style="font-size:.75rem;font-weight:700;
+                   background:#fef9c3;color:#854d0e;
+                   border:1px solid #fde047;border-radius:999px;
+                   padding:3px 10px;">
+        🎭 ${formatRole(role)}
+      </span>
+      <button id="btn-change-role" class="btn btn--outline btn--sm" style="font-size:.75rem;padding:3px 10px;">
+        Changer de rôle
+      </button>
+    </div>`;
 }
 
 function _renderUserChip(profile) {
@@ -65,7 +86,7 @@ function _renderUserChip(profile) {
       </div>
       <div style="display:flex;flex-direction:column;line-height:1.2;">
         <span style="font-size:.8125rem;font-weight:600;">${profile.prenom ?? ''} ${profile.nom ?? ''}</span>
-        <span style="font-size:.6875rem;color:var(--color-text-muted);">${formatRole(profile.role)}</span>
+        <span style="font-size:.6875rem;color:var(--color-text-muted);">${formatRole(getRole())}</span>
       </div>
       <button id="btn-logout" class="btn btn--ghost btn--icon"
               style="width:24px;height:24px;font-size:.8rem;color:var(--color-text-muted);"

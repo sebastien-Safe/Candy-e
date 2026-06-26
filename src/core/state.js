@@ -67,7 +67,8 @@ export function subscribe(key, fn) {
 
 export function getUser()    { return _state.user; }
 export function getProfile() { return _state.profile; }
-export function getRole()    { return _state.profile?.role ?? null; }
+export function getRole()    { return sessionStorage.getItem('candy_demo_role') || _state.profile?.role || null; }
+export function isDemoMode() { return !!sessionStorage.getItem('candy_demo_role'); }
 
 export function setUser(user)       { setState('user', user); }
 export function setProfile(profile) { setState('profile', profile); }
