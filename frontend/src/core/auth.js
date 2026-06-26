@@ -59,7 +59,7 @@ export async function logout() {
   if (error) throw error;
   setUser(null);
   setProfile(null);
-  window.location.href = '/login.html';
+  _redirect('login');
 }
 
 /**
@@ -89,7 +89,7 @@ export async function getCurrentUser() {
 export async function requireAuth() {
   const session = await getSession();
   if (!session) {
-    window.location.href = '/login.html';
+    _redirect('login');
     return false;
   }
   return true;
@@ -102,7 +102,18 @@ export async function requireAuth() {
 export async function redirectIfAuthenticated() {
   const session = await getSession();
   if (session) {
-    window.location.href = '/index.html';
+    _redirect('dashboard');
+  }
+}
+
+// ─── Navigation relative (fonctionne en local et sur GitHub Pages) ────────────
+
+function _redirect(to) {
+  const inPublic = window.location.pathname.includes('/public/');
+  if (to === 'dashboard') {
+    window.location.href = inPublic ? 'index.html' : 'public/index.html';
+  } else {
+    window.location.href = inPublic ? '../index.html' : 'index.html';
   }
 }
 
