@@ -4,23 +4,86 @@
  */
 
 export const ROLES = {
-  ADMIN_CRM:    'admin_crm',
-  MEDECIN:      'medecin',
-  SECRETAIRE:   'secretaire',
-  MEDECIN_DEMO: 'medecin_demo',
+  ADMIN_CRM:      'admin_crm',
+  ADMINISTRATEUR: 'administrateur',
+  MEDECIN:        'medecin',
+  MEDECIN_DEMO:   'medecin_demo',
+  CADRE:          'cadre',
+  INFIRMIERE:     'infirmiere',
+  AIDE_SOIGNANTE: 'aide_soignante',
+  ASH:            'ash',
+  KINE:           'kine',
+  PSYCHO:         'psycho',
+  ERGO:           'ergo',
+  SECRETAIRE:     'secretaire',
 };
 
-const PERMISSIONS = {
-  admin_crm: ['*'],
+const _full = [
+  'patient.read', 'patient.write',
+  'consultation.read', 'consultation.write',
+  'ordonnance.read', 'ordonnance.write',
+  'agenda.read', 'agenda.write',
+  'document.read', 'document.write',
+  'note.read', 'note.write',
+  'stats',
+];
 
-  medecin: [
+const PERMISSIONS = {
+  admin_crm:      ['*'],
+  administrateur: ['*'],
+
+  medecin:        _full,
+  medecin_demo:   ['patient.read', 'consultation.read', 'ordonnance.read', 'agenda.read', 'document.read', 'note.read', 'stats'],
+
+  cadre: [
     'patient.read', 'patient.write',
-    'consultation.read', 'consultation.write',
-    'ordonnance.read', 'ordonnance.write',
+    'consultation.read',
+    'ordonnance.read',
     'agenda.read', 'agenda.write',
-    'document.read', 'document.write',
+    'document.read',
     'note.read', 'note.write',
     'stats',
+  ],
+
+  infirmiere: [
+    'patient.read', 'patient.write',
+    'consultation.read',
+    'ordonnance.read',
+    'agenda.read',
+    'document.read',
+    'note.read', 'note.write',
+  ],
+
+  aide_soignante: [
+    'patient.read',
+    'agenda.read',
+    'note.read', 'note.write',
+  ],
+
+  ash: [
+    'patient.read',
+    'agenda.read',
+    'note.read',
+  ],
+
+  kine: [
+    'patient.read',
+    'consultation.read',
+    'agenda.read',
+    'note.read', 'note.write',
+  ],
+
+  psycho: [
+    'patient.read',
+    'consultation.read',
+    'agenda.read',
+    'note.read', 'note.write',
+  ],
+
+  ergo: [
+    'patient.read',
+    'agenda.read',
+    'note.read',
   ],
 
   secretaire: [
@@ -29,16 +92,6 @@ const PERMISSIONS = {
     'ordonnance.read',
     'document.read',
     'note.read',
-  ],
-
-  medecin_demo: [
-    'patient.read',
-    'consultation.read',
-    'ordonnance.read',
-    'agenda.read',
-    'document.read',
-    'note.read',
-    'stats',
   ],
 };
 

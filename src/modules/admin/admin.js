@@ -126,10 +126,24 @@ async function _loadUsers() {
             <div class="form-group">
               <label class="label label--required">Rôle</label>
               <select class="select" id="u-role">
-                <option value="secretaire">Secrétaire</option>
-                <option value="medecin">Médecin</option>
-                <option value="medecin_demo">Médecin (démo)</option>
-                <option value="admin_crm">Administrateur</option>
+                <optgroup label="Administration">
+                  <option value="admin_crm">Administrateur CRM</option>
+                  <option value="administrateur">Administrateur EHPAD</option>
+                  <option value="cadre">Cadre de santé</option>
+                </optgroup>
+                <optgroup label="Personnel médical">
+                  <option value="medecin">Médecin</option>
+                  <option value="medecin_demo">Médecin (démo)</option>
+                  <option value="infirmiere">Infirmier(e)</option>
+                  <option value="aide_soignante">Aide-soignant(e)</option>
+                  <option value="kine">Kinésithérapeute</option>
+                  <option value="psycho">Psychologue</option>
+                  <option value="ergo">Ergothérapeute</option>
+                </optgroup>
+                <optgroup label="Autres">
+                  <option value="ash">ASH</option>
+                  <option value="secretaire">Secrétaire</option>
+                </optgroup>
               </select>
             </div>
             <div class="form-group">
