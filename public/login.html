@@ -219,7 +219,7 @@
       setLoading(true);
       try {
         await login(email, password);
-        window.location.href = '/index.html';
+        window.location.href = 'index.html';
       } catch (err) {
         const msg = err?.message?.includes('Invalid login')
           ? 'Identifiants incorrects. Veuillez réessayer.'
