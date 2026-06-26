@@ -1,0 +1,80 @@
+/* ==============================================================================
+   [ candy-e ] — TYPOGRAPHIE
+   Fichier : styles/base/typography.css
+   ============================================================================== */
+
+body {
+  font-family: var(--font-sans);
+  font-size: var(--text-md);
+  font-weight: var(--fw-normal);
+  line-height: var(--lh-normal);
+  color: var(--color-text);
+}
+
+/* Échelle de titres */
+.h1, h1 { font-size: var(--text-4xl); font-weight: var(--fw-bold);    letter-spacing: -0.03em; }
+.h2, h2 { font-size: var(--text-3xl); font-weight: var(--fw-bold);    letter-spacing: -0.02em; }
+.h3, h3 { font-size: var(--text-2xl); font-weight: var(--fw-semibold); letter-spacing: -0.015em; }
+.h4, h4 { font-size: var(--text-xl);  font-weight: var(--fw-semibold); }
+.h5, h5 { font-size: var(--text-lg);  font-weight: var(--fw-medium); }
+.h6, h6 { font-size: var(--text-md);  font-weight: var(--fw-medium); }
+
+/* Texte courant */
+.text-xs  { font-size: var(--text-xs); }
+.text-sm  { font-size: var(--text-sm); }
+.text-md  { font-size: var(--text-md); }
+.text-lg  { font-size: var(--text-lg); }
+.text-xl  { font-size: var(--text-xl); }
+
+/* Poids */
+.fw-light    { font-weight: var(--fw-light); }
+.fw-normal   { font-weight: var(--fw-normal); }
+.fw-medium   { font-weight: var(--fw-medium); }
+.fw-semibold { font-weight: var(--fw-semibold); }
+.fw-bold     { font-weight: var(--fw-bold); }
+
+/* Couleurs de texte */
+.text-primary   { color: var(--color-text); }
+.text-secondary { color: var(--color-text-secondary); }
+.text-muted     { color: var(--color-text-muted); }
+.text-accent    { color: var(--color-primary); }
+.text-success   { color: var(--color-success); }
+.text-warning   { color: var(--color-warning); }
+.text-danger    { color: var(--color-danger); }
+
+/* Alignement */
+.text-left   { text-align: left; }
+.text-center { text-align: center; }
+.text-right  { text-align: right; }
+
+/* Utilitaires */
+.truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.uppercase    { text-transform: uppercase; }
+.lowercase    { text-transform: lowercase; }
+.capitalize   { text-transform: capitalize; }
+.tracking-wide { letter-spacing: 0.05em; }
+.tracking-wider { letter-spacing: 0.1em; }
+
+/* Code inline */
+code {
+  font-family: var(--font-mono);
+  font-size: 0.875em;
+  background: var(--color-surface-overlay);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 0.1em 0.35em;
+}
+
+/* Étiquette de section */
+.section-label {
+  font-size: var(--text-xs);
+  font-weight: var(--fw-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-text-muted);
+}

@@ -1,0 +1,111 @@
+/* ==============================================================================
+   [ candy-e ] — COMPOSANT BUTTON
+   Fichier : styles/components/button.css
+   ============================================================================== */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-md);
+  font-size: var(--text-sm);
+  font-weight: var(--fw-medium);
+  font-family: var(--font-sans);
+  line-height: 1.25;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: background var(--transition), color var(--transition),
+              border-color var(--transition), box-shadow var(--transition),
+              transform var(--transition-fast);
+  white-space: nowrap;
+  user-select: none;
+  text-decoration: none;
+}
+
+.btn:active { transform: translateY(1px); }
+
+.btn:disabled,
+.btn[aria-disabled="true"] {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* Tailles */
+.btn--xs { padding: 3px 8px;             font-size: var(--text-xs); border-radius: var(--radius-sm); }
+.btn--sm { padding: var(--space-1) var(--space-3); font-size: var(--text-sm); }
+.btn--lg { padding: var(--space-3) var(--space-6); font-size: var(--text-md); }
+.btn--xl { padding: var(--space-4) var(--space-8); font-size: var(--text-lg); }
+
+/* Pleine largeur */
+.btn--full { width: 100%; }
+
+/* Icône seule */
+.btn--icon {
+  padding: var(--space-2);
+  width: 36px;
+  height: 36px;
+}
+
+/* Variantes */
+.btn--primary {
+  background: var(--color-primary);
+  color: #fff;
+  border-color: var(--color-primary);
+}
+.btn--primary:hover { background: var(--color-primary-dark); border-color: var(--color-primary-dark); }
+
+.btn--secondary {
+  background: var(--color-secondary);
+  color: #fff;
+  border-color: var(--color-secondary);
+}
+.btn--secondary:hover { background: var(--color-secondary-dark); }
+
+.btn--success {
+  background: var(--color-success);
+  color: #fff;
+  border-color: var(--color-success);
+}
+.btn--success:hover { background: var(--color-success-dark); }
+
+.btn--danger {
+  background: var(--color-danger);
+  color: #fff;
+  border-color: var(--color-danger);
+}
+.btn--danger:hover { background: var(--color-danger-dark); }
+
+.btn--warning {
+  background: var(--color-warning);
+  color: #fff;
+  border-color: var(--color-warning);
+}
+.btn--warning:hover { background: var(--color-warning-dark); }
+
+.btn--outline {
+  background: transparent;
+  color: var(--color-text);
+  border-color: var(--color-border-strong);
+}
+.btn--outline:hover { background: var(--color-surface-overlay); }
+
+.btn--ghost {
+  background: transparent;
+  color: var(--color-text-secondary);
+  border-color: transparent;
+}
+.btn--ghost:hover { background: var(--color-surface-overlay); color: var(--color-text); }
+
+.btn--link {
+  background: transparent;
+  color: var(--color-primary);
+  border: none;
+  padding-left: 0;
+  padding-right: 0;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.btn--link:hover { color: var(--color-primary-dark); }

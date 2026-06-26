@@ -1,0 +1,57 @@
+/* ==============================================================================
+   [ candy-e ] — THÈME SOMBRE
+   Fichier : styles/themes/dark.css
+   Activé via : <html data-theme="dark">
+   Persisté dans localStorage par theme.js
+   ============================================================================== */
+
+[data-theme="dark"] {
+  --color-bg:             #0b1120;
+  --color-surface:        #111827;
+  --color-surface-raised: #1a2236;
+  --color-surface-overlay:#1f2d44;
+  --color-border:         #1e293b;
+  --color-border-strong:  #334155;
+
+  --color-text:           #e2e8f0;
+  --color-text-secondary: #94a3b8;
+  --color-text-muted:     #64748b;
+  --color-text-disabled:  #334155;
+
+  --color-primary:        #3b82f6;
+  --color-primary-light:  #1e3a5f;
+  --color-primary-dark:   #60a5fa;
+
+  --color-secondary:      #14b8a6;
+  --color-secondary-light:#134e4a;
+
+  --color-success:        #22c55e;
+  --color-success-light:  #052e16;
+  --color-warning:        #f59e0b;
+  --color-warning-light:  #1c1000;
+  --color-danger:         #f87171;
+  --color-danger-light:   #1c0707;
+  --color-info:           #38bdf8;
+  --color-info-light:     #071a36;
+
+  --shadow-sm:  0 1px 3px rgba(0, 0, 0, 0.30);
+  --shadow-md:  0 4px 10px rgba(0, 0, 0, 0.40);
+  --shadow-lg:  0 10px 25px rgba(0, 0, 0, 0.50);
+
+  /* Sidebar */
+  --sidebar-bg:           #0f172a;
+  --sidebar-text:         #94a3b8;
+  --sidebar-text-active:  #60a5fa;
+  --sidebar-item-active:  #1e3a5f;
+  --sidebar-item-hover:   #1a2236;
+
+  /* Topbar */
+  --topbar-bg:            #0f172a;
+  --topbar-border:        #1e293b;
+
+  /* Input */
+  --input-bg:             #111827;
+  --input-border:         #1e293b;
+  --input-border-focus:   #3b82f6;
+  --input-placeholder:    #4b5563;
+}

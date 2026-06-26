@@ -1,0 +1,128 @@
+/* ==============================================================================
+   [ candy-e ] — COMPOSANT CARD
+   Fichier : styles/components/card.css
+   ============================================================================== */
+
+.card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
+/* Variante interactive (cliquable) */
+.card--interactive {
+  cursor: pointer;
+  transition: box-shadow var(--transition), transform var(--transition),
+              border-color var(--transition);
+}
+.card--interactive:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+  border-color: var(--color-border-strong);
+}
+
+/* Variante surélevée */
+.card--raised {
+  box-shadow: var(--shadow-md);
+}
+
+/* Variante plate (sans ombre) */
+.card--flat {
+  box-shadow: none;
+}
+
+/* Sections internes */
+.card__header {
+  padding: var(--space-4) var(--space-5);
+  border-bottom: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.card__title {
+  font-size: var(--text-md);
+  font-weight: var(--fw-semibold);
+  color: var(--color-text);
+}
+
+.card__subtitle {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  margin-top: 2px;
+}
+
+.card__body {
+  padding: var(--space-5);
+}
+
+.card__footer {
+  padding: var(--space-3) var(--space-5);
+  border-top: 1px solid var(--color-border);
+  background: var(--color-surface-raised);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+/* Carte KPI (statistique) */
+.card-kpi {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  position: relative;
+  overflow: hidden;
+}
+
+.card-kpi::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--kpi-color, var(--color-primary));
+}
+
+.card-kpi__label {
+  font-size: var(--text-xs);
+  font-weight: var(--fw-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--color-text-muted);
+}
+
+.card-kpi__value {
+  font-size: var(--text-3xl);
+  font-weight: var(--fw-bold);
+  color: var(--color-text);
+  letter-spacing: -0.03em;
+  line-height: 1;
+}
+
+.card-kpi__delta {
+  font-size: var(--text-xs);
+  font-weight: var(--fw-medium);
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.card-kpi__delta--up   { color: var(--color-success); }
+.card-kpi__delta--down { color: var(--color-danger); }
+.card-kpi__delta--flat { color: var(--color-text-muted); }
+
+.card-kpi__icon {
+  position: absolute;
+  top: var(--space-4);
+  right: var(--space-4);
+  font-size: 1.75rem;
+  opacity: 0.15;
+}
