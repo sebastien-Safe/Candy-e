@@ -1,4 +1,192 @@
 <!DOCTYPE html>
-<html><head><meta http-equiv="refresh" content="0;url=public/login.html" /></head>
-<body><a href="public/login.html">candy-e</a></body>
+<html lang="fr" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>[ candy-e ] — Connexion</title>
+
+  <link rel="stylesheet" href="src/styles/main.css" />
+  <script src="public/assets/vendor/supabase.min.js"></script>
+
+  <style>
+    .login-page {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--color-bg);
+      padding: var(--space-4);
+    }
+    .login-card {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-lg);
+      width: 100%;
+      max-width: 400px;
+      padding: var(--space-8);
+    }
+    .login-brand {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--space-3);
+      margin-bottom: var(--space-8);
+      text-align: center;
+    }
+    .login-logo {
+      width: 56px;
+      height: 56px;
+      border-radius: var(--radius-lg);
+      background: linear-gradient(135deg, var(--color-primary), #7c3aed);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-weight: 700;
+      font-size: 1.25rem;
+      letter-spacing: -1px;
+    }
+    .login-title {
+      font-size: var(--text-2xl);
+      font-weight: var(--fw-bold);
+      color: var(--color-text);
+      letter-spacing: -0.02em;
+    }
+    .login-title span { color: var(--color-primary); }
+    .login-subtitle {
+      font-size: var(--text-sm);
+      color: var(--color-text-muted);
+    }
+    .login-form {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-4);
+    }
+    .login-error {
+      background: var(--color-danger-light);
+      color: var(--color-danger-dark, #991b1b);
+      border: 1px solid var(--color-danger);
+      border-radius: var(--radius-md);
+      padding: var(--space-3) var(--space-4);
+      font-size: var(--text-sm);
+      display: none;
+    }
+    .login-error.visible { display: block; }
+    .login-footer {
+      margin-top: var(--space-6);
+      text-align: center;
+      font-size: var(--text-xs);
+      color: var(--color-text-muted);
+      border-top: 1px solid var(--color-border);
+      padding-top: var(--space-4);
+    }
+    .btn-spinner {
+      display: none;
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255,255,255,.4);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin .6s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .btn--loading .btn-spinner { display: inline-block; }
+    .btn--loading .btn-label   { display: none; }
+  </style>
+</head>
+<body>
+
+  <div class="login-page">
+    <div class="login-card">
+
+      <div class="login-brand">
+        <div class="login-logo">ce</div>
+        <div>
+          <div class="login-title">[ <span>candy-e</span> ]</div>
+          <div class="login-subtitle">Système d'information de santé</div>
+        </div>
+      </div>
+
+      <form class="login-form" id="login-form" novalidate autocomplete="on">
+        <div class="login-error" id="login-error" role="alert"></div>
+
+        <div class="form-group">
+          <label class="label" for="email">Adresse e-mail</label>
+          <div class="input-wrapper">
+            <span class="input-wrapper__icon" aria-hidden="true">✉</span>
+            <input class="input" type="email" id="email" name="email"
+              autocomplete="email" placeholder="prenom.nom@etablissement.fr" required />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="label" for="password">Mot de passe</label>
+          <div class="input-wrapper">
+            <span class="input-wrapper__icon" aria-hidden="true">🔒</span>
+            <input class="input" type="password" id="password" name="password"
+              autocomplete="current-password" placeholder="••••••••" required />
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn--primary btn--full btn--lg" id="btn-login">
+          <span class="btn-spinner" aria-hidden="true"></span>
+          <span class="btn-label">Se connecter</span>
+        </button>
+      </form>
+
+      <div class="login-footer">
+        Infrastructure auto-hébergée · Réseau local interne uniquement<br />
+        En cas de problème de connexion, contacter l'administrateur système.
+      </div>
+
+    </div>
+  </div>
+
+  <script type="module">
+    import { login, redirectIfAuthenticated } from './src/core/auth.js';
+
+    await redirectIfAuthenticated();
+
+    const form     = document.getElementById('login-form');
+    const btnLogin = document.getElementById('btn-login');
+    const errorEl  = document.getElementById('login-error');
+
+    function setLoading(v) {
+      btnLogin.classList.toggle('btn--loading', v);
+      btnLogin.disabled = v;
+    }
+    function showError(msg) {
+      errorEl.textContent = msg;
+      errorEl.classList.add('visible');
+    }
+    function clearError() {
+      errorEl.classList.remove('visible');
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      clearError();
+      const email    = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+      if (!email || !password) {
+        showError('Veuillez renseigner votre e-mail et votre mot de passe.');
+        return;
+      }
+      setLoading(true);
+      try {
+        await login(email, password);
+        window.location.href = 'public/index.html';
+      } catch (err) {
+        const msg = err?.message?.includes('Invalid login')
+          ? 'Identifiants incorrects. Veuillez réessayer.'
+          : err?.message ?? 'Erreur de connexion. Contactez l\'administrateur.';
+        showError(msg);
+      } finally {
+        setLoading(false);
+      }
+    });
+  </script>
+
+</body>
 </html>
