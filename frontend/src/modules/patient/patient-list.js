@@ -7,7 +7,7 @@ import { getRole }              from '../../core/state.js';
 import { can }                  from '../../core/rbac.js';
 import { navigate }             from '../../core/router.js';
 import { formatDate, calcAge }  from '../../utils/date.js';
-import { formatNomComplet, orDash } from '../../utils/format.js';
+import { formatNomComplet, orDash, formatGIR } from '../../utils/format.js';
 import { addNotification, setCurrentPatientId } from '../../core/state.js';
 
 let _patients = [];
@@ -138,7 +138,7 @@ export async function mountPatientList() {
 async function _loadPatients() {
   const { data, error } = await supabase
     .from('patients')
-    .select('id, nom, prenom, date_naissance, ville, telephone, actif')
+    .select('id, nom, prenom, date_naissance, ville, telephone, actif, gir')
     .order('nom');
 
   if (error) { _renderError(error.message); return; }
@@ -194,6 +194,7 @@ function _renderTable() {
           <tr style="cursor:pointer;" data-id="${p.id}" class="patient-row">
             <td style="font-weight:500;">${formatNomComplet(p.nom, p.prenom)}</td>
             <td>${formatDate(p.date_naissance)} <span style="color:var(--color-text-muted);font-size:.75rem;">(${calcAge(p.date_naissance)} ans)</span></td>
+            <td>${p.gir ? `<span class="badge badge--neutral" title="${formatGIR(p.gir)}">GIR ${p.gir}</span>` : '—'}</td>
             <td>${orDash(p.ville)}</td>
             <td>${orDash(p.telephone)}</td>
             <td><span class="badge ${p.actif ? 'badge--success' : 'badge--neutral'}">${p.actif ? 'Actif' : 'Inactif'}</span></td>
@@ -233,6 +234,7 @@ function _thRow() {
   const cols = [
     { key: 'nom',            label: 'Nom complet' },
     { key: 'date_naissance', label: 'Date de naissance' },
+    { key: 'gir',            label: 'GIR' },
     { key: 'ville',          label: 'Ville' },
     { key: 'telephone',      label: 'Téléphone' },
     { key: null,             label: 'Statut' },

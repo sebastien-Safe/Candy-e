@@ -7,7 +7,7 @@ import { getRole, getCurrentPatientId } from '../../core/state.js';
 import { can, PATIENT_TABS }           from '../../core/rbac.js';
 import { navigate }                    from '../../core/router.js';
 import { formatDate, formatDateTime, calcAge, timeAgo, todayISO } from '../../utils/date.js';
-import { formatNomComplet, orDash }    from '../../utils/format.js';
+import { formatNomComplet, orDash, formatGIR } from '../../utils/format.js';
 import { addNotification }             from '../../core/state.js';
 
 export async function mountPatientRecord(activeTabId = null) {
@@ -167,7 +167,9 @@ async function _tabEtatCivil(id) {
       ${_field('Nom', p.nom?.toUpperCase())}
       ${_field('Prénom', p.prenom)}
       ${_field('Date de naissance', formatDate(p.date_naissance))}
+      ${_field('Âge', calcAge(p.date_naissance) ? `${calcAge(p.date_naissance)} ans` : '—')}
       ${_field('Sexe', orDash(p.sexe))}
+      ${_field('GIR', p.gir ? `<span class="badge badge--neutral" title="${formatGIR(p.gir)}">GIR ${p.gir} — ${formatGIR(p.gir).split('— ')[1] ?? ''}</span>` : '—')}
       ${_field('Situation', orDash(p.situation))}
       ${_field('Profession', orDash(p.profession))}
       ${_field('Téléphone', orDash(p.telephone))}
