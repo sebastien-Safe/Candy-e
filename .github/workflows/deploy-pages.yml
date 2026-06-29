@@ -27,7 +27,7 @@ jobs:
 
       - name: Adapter le base href pour GitHub Pages
         run: |
-          sed -i 's|<base href="/public/">|<base href="/Candy-e/public/">|g' \
+          sed -i 's|<base href="/public/" />|<base href="/Candy-e/public/" />|g' \
             frontend/public/index.html
 
       - name: Configurer GitHub Pages
