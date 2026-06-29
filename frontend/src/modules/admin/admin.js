@@ -201,11 +201,10 @@ async function _loadUsers() {
 async function _deleteUser(id, nom) {
   if (!window.confirm(`Supprimer définitivement le compte de ${nom} ?\n\nCette action est irréversible.`)) return;
 
-  const { error } = await supabase.auth.admin.deleteUser(id);
+  const { error } = await supabase.rpc('delete_user_by_id', { user_id: id });
   if (error) {
-    // Fallback : désactiver le profil si la suppression auth échoue (clé anon sans droits admin)
-    const { error: e2 } = await supabase.from('profiles').delete().eq('id', id);
-    if (e2) { addNotification({ type: 'danger', title: 'Erreur suppression', message: e2.message }); return; }
+    addNotification({ type: 'danger', title: 'Erreur suppression', message: error.message });
+    return;
   }
 
   addNotification({ type: 'success', title: 'Compte supprimé', message: nom });
