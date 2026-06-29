@@ -1,0 +1,17 @@
+[build]
+  publish = "frontend"
+
+# Pretty URLs : /public/login au lieu de /public/login.html (comme npx serve)
+[build.processing]
+  skip_processing = false
+
+[build.processing.html]
+  pretty_urls = true
+
+# Cache désactivé pour tous les assets (évite les modules JS périmés)
+[[headers]]
+  for = "/**"
+  [headers.values]
+    Cache-Control = "no-cache, no-store, must-revalidate"
+    Pragma        = "no-cache"
+    Expires       = "0"
