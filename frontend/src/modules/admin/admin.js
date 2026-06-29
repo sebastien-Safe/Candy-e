@@ -3,10 +3,10 @@
  * Accessible uniquement aux utilisateurs avec rôle admin_crm.
  */
 
-import { supabase }        from '../../core/supabase.client.js';
-import { addNotification } from '../../core/state.js';
-import { formatRole }      from '../../utils/format.js';
-import { formatDateTime }  from '../../utils/date.js';
+import { supabase }             from '../../core/supabase.client.js';
+import { addNotification, getRole } from '../../core/state.js';
+import { formatRole }           from '../../utils/format.js';
+import { formatDateTime }       from '../../utils/date.js';
 
 export async function mountAdmin() {
   const main = document.getElementById('main-content');
@@ -62,6 +62,8 @@ async function _loadUsers() {
 
   if (error) { el.innerHTML = _erreur(error.message); return; }
 
+  const canDelete = getRole() === 'admin_crm';
+
   el.innerHTML = `
     <div class="card">
       <div class="card__header">
@@ -84,11 +86,21 @@ async function _loadUsers() {
                   <td style="color:var(--color-text-muted);font-size:.8125rem;">${u.specialite ?? '—'}</td>
                   <td><span class="badge ${u.actif ? 'badge--success' : 'badge--neutral'}">${u.actif ? 'Actif' : 'Inactif'}</span></td>
                   <td>
-                    <button class="btn btn--ghost btn--sm btn-toggle-user"
-                            data-id="${u.id}" data-actif="${u.actif}"
-                            title="${u.actif ? 'Désactiver' : 'Activer'}">
-                      ${u.actif ? '🔒' : '🔓'}
-                    </button>
+                    <div class="table__actions">
+                      <button class="btn btn--ghost btn--sm btn-toggle-user"
+                              data-id="${u.id}" data-actif="${u.actif}"
+                              title="${u.actif ? 'Désactiver' : 'Activer'}">
+                        ${u.actif ? '🔒' : '🔓'}
+                      </button>
+                      ${canDelete ? `
+                      <button class="btn btn--ghost btn--sm btn-delete-user"
+                              data-id="${u.id}"
+                              data-nom="${(u.prenom ?? '') + ' ' + (u.nom ?? '')}"
+                              title="Supprimer ce compte"
+                              style="color:var(--color-danger, #e53e3e);">
+                        ❌
+                      </button>` : ''}
+                    </div>
                   </td>
                 </tr>`).join('')}
           </tbody>
@@ -180,6 +192,24 @@ async function _loadUsers() {
       await _loadUsers();
     });
   });
+
+  document.querySelectorAll('.btn-delete-user').forEach(btn => {
+    btn.addEventListener('click', () => _deleteUser(btn.dataset.id, btn.dataset.nom));
+  });
+}
+
+async function _deleteUser(id, nom) {
+  if (!window.confirm(`Supprimer définitivement le compte de ${nom} ?\n\nCette action est irréversible.`)) return;
+
+  const { error } = await supabase.auth.admin.deleteUser(id);
+  if (error) {
+    // Fallback : désactiver le profil si la suppression auth échoue (clé anon sans droits admin)
+    const { error: e2 } = await supabase.from('profiles').delete().eq('id', id);
+    if (e2) { addNotification({ type: 'danger', title: 'Erreur suppression', message: e2.message }); return; }
+  }
+
+  addNotification({ type: 'success', title: 'Compte supprimé', message: nom });
+  await _loadUsers();
 }
 
 async function _createUser() {

@@ -52,6 +52,7 @@
     import { mountTournee }                  from '../src/modules/tournee/tournee.js';
     import { mountSoins }                    from '../src/modules/soins/soins.js';
     import { mountTraitements }              from '../src/modules/traitements/traitements.js';
+    import { mountStats }                    from '../src/modules/stats/stats.js';
     import { subscribe, removeNotification } from '../src/core/state.js';
 
     (async () => {
@@ -88,6 +89,7 @@
       route('agenda',        () => mountAgenda(),        { permission: 'agenda.read' });
       route('consultations', () => mountPatientList(),   { permission: 'consultation.read' });
       route('ordonnances',   () => mountPatientList(),   { permission: 'ordonnance.read' });
+      route('stats',         () => mountStats(),         { permission: 'stat.read' });
       route('admin',         () => mountAdmin(),         { permission: 'admin.access' });
 
       // 5. Démarrer le routeur
