@@ -36,6 +36,13 @@ export function formatGIR(niveau) {
   return labels[niveau] ?? `GIR ${niveau}`;
 }
 
+export function girIcon(niveau) {
+  if (!niveau) return '';
+  if (niveau <= 2) return '🔴';
+  if (niveau <= 4) return '🟠';
+  return '🟢';
+}
+
 export function truncate(str, n = 80) {
   if (!str || str.length <= n) return str ?? '';
   return str.slice(0, n).trimEnd() + '…';

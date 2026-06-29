@@ -7,7 +7,8 @@ import { getRole }              from '../../core/state.js';
 import { can }                  from '../../core/rbac.js';
 import { navigate }             from '../../core/router.js';
 import { formatDate, calcAge }  from '../../utils/date.js';
-import { formatNomComplet, orDash, formatGIR } from '../../utils/format.js';
+import { formatNomComplet, orDash, formatGIR, girIcon } from '../../utils/format.js';
+import { openGirCalculator } from './gir-calculator.js';
 import { addNotification, setCurrentPatientId } from '../../core/state.js';
 
 let _patients = [];
@@ -123,15 +124,21 @@ export async function mountPatientList() {
             </div>
             <div class="form-group">
               <label class="label" for="f-gir">GIR (Groupe Iso-Ressources)</label>
-              <select class="select" id="f-gir">
-                <option value="">— Non renseigné</option>
-                <option value="1">GIR 1 — Totalement dépendant</option>
-                <option value="2">GIR 2 — Très dépendant</option>
-                <option value="3">GIR 3 — Dépendant</option>
-                <option value="4">GIR 4 — Partiellement dépendant</option>
-                <option value="5">GIR 5 — Peu dépendant</option>
-                <option value="6">GIR 6 — Autonome</option>
-              </select>
+              <div style="display:flex;gap:.5rem;align-items:center;">
+                <select class="select" id="f-gir" style="flex:1;">
+                  <option value="">— Non renseigné</option>
+                  <option value="1">🔴 GIR 1 — Totalement dépendant</option>
+                  <option value="2">🔴 GIR 2 — Très dépendant</option>
+                  <option value="3">🟠 GIR 3 — Dépendant</option>
+                  <option value="4">🟠 GIR 4 — Partiellement dépendant</option>
+                  <option value="5">🟢 GIR 5 — Peu dépendant</option>
+                  <option value="6">🟢 GIR 6 — Autonome</option>
+                </select>
+                <button type="button" class="btn btn--outline btn--sm" id="btn-gir-calc"
+                        title="Calculer le GIR avec la grille AGGIR" style="white-space:nowrap;">
+                  🧮 Calculer
+                </button>
+              </div>
             </div>
           </form>
         </div>
@@ -206,7 +213,7 @@ function _renderTable() {
           <tr style="cursor:pointer;" data-id="${p.id}" class="patient-row">
             <td style="font-weight:500;">${formatNomComplet(p.nom, p.prenom)}</td>
             <td>${formatDate(p.date_naissance)} <span style="color:var(--color-text-muted);font-size:.75rem;">(${calcAge(p.date_naissance)} ans)</span></td>
-            <td>${p.gir ? `<span class="badge badge--neutral" title="${formatGIR(p.gir)}">GIR ${p.gir}</span>` : '—'}</td>
+            <td>${p.gir ? `<span class="badge badge--neutral" title="${formatGIR(p.gir)}">${girIcon(p.gir)} GIR ${p.gir}</span>` : '—'}</td>
             <td>${orDash(p.ville)}</td>
             <td>${orDash(p.telephone)}</td>
             <td><span class="badge ${p.actif ? 'badge--success' : 'badge--neutral'}">${p.actif ? 'Actif' : 'Inactif'}</span></td>
@@ -352,6 +359,13 @@ function _bindEvents(canWrite) {
     document.getElementById('patient-modal')?.classList.add('hidden');
   });
   document.getElementById('btn-save')?.addEventListener('click', _savePatient);
+
+  document.getElementById('btn-gir-calc')?.addEventListener('click', () => {
+    openGirCalculator(gir => {
+      const sel = document.getElementById('f-gir');
+      if (sel) sel.value = String(gir);
+    });
+  });
 }
 
 function _renderError(msg) {

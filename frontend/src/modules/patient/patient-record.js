@@ -7,7 +7,8 @@ import { getRole, getCurrentPatientId } from '../../core/state.js';
 import { can, PATIENT_TABS }           from '../../core/rbac.js';
 import { navigate }                    from '../../core/router.js';
 import { formatDate, formatDateTime, calcAge, timeAgo, todayISO } from '../../utils/date.js';
-import { formatNomComplet, orDash, formatGIR } from '../../utils/format.js';
+import { formatNomComplet, orDash, formatGIR, girIcon } from '../../utils/format.js';
+import { openGirCalculator } from './gir-calculator.js';
 import { addNotification }             from '../../core/state.js';
 
 export async function mountPatientRecord(activeTabId = null) {
@@ -150,11 +151,26 @@ async function _loadTab(tabId, patientId, role) {
   const loader = loaders[tabId];
   content.innerHTML = loader ? await loader() : `<p style="color:var(--color-text-muted);">Module non disponible.</p>`;
 
+  if (tabId === 'etat_civil')    _bindEtatCivilEvents(patientId);
   if (tabId === 'notes')         _bindNoteEvents(patientId, role);
   if (tabId === 'consultations' && can(role, 'consultation.write')) _bindConsultationEvents(patientId);
   if (tabId === 'constantes'    && can(role, 'constante.write'))    _bindConstantesEvents(patientId);
   if (tabId === 'traitements'   && can(role, 'traitement.write'))   _bindTraitementsEvents(patientId);
   if (tabId === 'soins'         && can(role, 'soin.write'))         _bindSoinsEvents(patientId);
+}
+
+function _bindEtatCivilEvents(patientId) {
+  document.getElementById('btn-gir-calc-record')?.addEventListener('click', () => {
+    openGirCalculator(async gir => {
+      const { error } = await supabase.from('patients').update({ gir }).eq('id', patientId);
+      if (error) {
+        addNotification({ type: 'danger', title: 'Erreur', message: error.message });
+        return;
+      }
+      addNotification({ type: 'success', title: 'GIR mis à jour', message: `GIR ${gir} enregistré` });
+      await _loadTab('etat_civil', patientId, getRole());
+    });
+  });
 }
 
 // ── Onglet : État civil ──────────────────────────────────────────────────────
@@ -169,7 +185,16 @@ async function _tabEtatCivil(id) {
       ${_field('Date de naissance', formatDate(p.date_naissance))}
       ${_field('Âge', calcAge(p.date_naissance) ? `${calcAge(p.date_naissance)} ans` : '—')}
       ${_field('Sexe', orDash(p.sexe))}
-      ${_field('GIR', p.gir ? `<span class="badge badge--neutral" title="${formatGIR(p.gir)}">GIR ${p.gir} — ${formatGIR(p.gir).split('— ')[1] ?? ''}</span>` : '—')}
+      ${_field('GIR', `
+        <span style="display:inline-flex;align-items:center;gap:.5rem;">
+          ${p.gir
+            ? `<span class="badge badge--neutral">${girIcon(p.gir)} GIR ${p.gir} — ${formatGIR(p.gir).split('— ')[1] ?? ''}</span>`
+            : '<span style="color:var(--color-text-muted)">—</span>'}
+          <button type="button" class="btn btn--outline btn--sm" id="btn-gir-calc-record"
+                  title="Calculer le GIR avec la grille AGGIR" style="font-size:.75rem;">
+            🧮 Calculer
+          </button>
+        </span>`)}
       ${_field('Situation', orDash(p.situation))}
       ${_field('Profession', orDash(p.profession))}
       ${_field('Téléphone', orDash(p.telephone))}
