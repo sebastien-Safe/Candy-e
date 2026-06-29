@@ -1,0 +1,63 @@
+╔══════════════════════════════════════════════════════════╗
+║        [ candy-e ] — Accès depuis le réseau local        ║
+╚══════════════════════════════════════════════════════════╝
+
+PRÉREQUIS
+─────────
+• Le Mac doit être allumé et connecté au WiFi/réseau de l'établissement.
+• candy-e doit être lancé (double-cliquer sur "Lancer candy-e.command").
+• Les autres appareils (tablettes, PC, téléphones) doivent être
+  sur le MÊME réseau WiFi ou filaire.
+
+
+ÉTAPE 1 — Lancer le serveur sur le Mac
+───────────────────────────────────────
+Double-cliquer sur :  Lancer candy-e.command
+
+Une fenêtre Terminal s'ouvre. Laisser cette fenêtre ouverte
+tant que candy-e doit rester accessible.
+
+
+ÉTAPE 2 — Trouver l'adresse IP du Mac (si elle a changé)
+──────────────────────────────────────────────────────────
+Ouvrir le Terminal et taper :
+
+    ipconfig getifaddr en0
+
+L'adresse affichée ressemble à :  192.168.x.x
+
+
+ÉTAPE 3 — Se connecter depuis un autre appareil
+────────────────────────────────────────────────
+Ouvrir un navigateur (Chrome, Safari, Edge…) et saisir :
+
+    http://192.168.3.254:3000/public/login.html
+
+        ↑ Remplacer par l'adresse IP du Mac si elle a changé.
+
+Identifiants de démonstration :
+  E-mail    : emilie@safe-digitalisation.fr
+  Mot de passe : FRAISE26
+
+
+RÉSOLUTION DE PROBLÈMES
+────────────────────────
+• Page inaccessible ?
+  → Vérifier que "Lancer candy-e.command" est bien ouvert sur le Mac.
+  → Vérifier que les deux appareils sont sur le même réseau WiFi.
+  → Sur le Mac : Préférences Système → Sécurité et confidentialité
+    → Coupe-feu → s'assurer que npx/node est autorisé.
+
+• L'adresse IP a changé ?
+  → Relancer la commande : ipconfig getifaddr en0
+  → Ou attribuer une IP fixe au Mac dans les préférences réseau.
+
+• Boucle de connexion ?
+  → Ajouter ?fresh=1 à la fin de l'URL :
+    http://192.168.3.254:3000/public/login.html?fresh=1
+
+
+ARRÊTER LE SERVEUR
+──────────────────
+Dans la fenêtre Terminal ouverte par "Lancer candy-e.command",
+appuyer sur :  Ctrl + C
