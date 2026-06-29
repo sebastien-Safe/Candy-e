@@ -121,6 +121,18 @@ export async function mountPatientList() {
                 </select>
               </div>
             </div>
+            <div class="form-group">
+              <label class="label" for="f-gir">GIR (Groupe Iso-Ressources)</label>
+              <select class="select" id="f-gir">
+                <option value="">— Non renseigné</option>
+                <option value="1">GIR 1 — Totalement dépendant</option>
+                <option value="2">GIR 2 — Très dépendant</option>
+                <option value="3">GIR 3 — Dépendant</option>
+                <option value="4">GIR 4 — Partiellement dépendant</option>
+                <option value="5">GIR 5 — Peu dépendant</option>
+                <option value="6">GIR 6 — Autonome</option>
+              </select>
+            </div>
           </form>
         </div>
         <div class="modal__footer">
@@ -280,6 +292,7 @@ async function _openModal(id = null) {
       document.getElementById('f-ddn').value    = p.date_naissance ?? '';
       document.getElementById('f-ville').value  = p.ville ?? '';
       document.getElementById('f-tel').value    = p.telephone ?? '';
+      document.getElementById('f-gir').value    = p.gir ?? '';
     }
   } else {
     document.getElementById('patient-form').reset();
@@ -300,6 +313,7 @@ async function _savePatient() {
     ville:           document.getElementById('f-ville').value.trim() || null,
     numero_secu:     document.getElementById('f-nir').value.replace(/\s/g, '') || null,
     groupe_sanguin:  document.getElementById('f-gs').value || null,
+    gir:             document.getElementById('f-gir').value ? parseInt(document.getElementById('f-gir').value) : null,
   };
 
   if (!payload.nom || !payload.prenom || !payload.date_naissance) {
