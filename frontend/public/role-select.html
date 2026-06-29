@@ -95,7 +95,7 @@
 
     // Vérifier que l'utilisateur est bien connecté
     const session = await getSession();
-    if (!session) { window.location.href = 'login.html'; }
+    if (!session) { window.location.replace('login.html?fresh=1'); }
 
     const ROLES = [
       // Administration
@@ -127,7 +127,7 @@
       `;
       card.addEventListener('click', () => {
         sessionStorage.setItem('candy_demo_role', role.id);
-        window.location.href = 'index.html';
+        window.location.replace('index.html');
       });
       grid.appendChild(card);
     });

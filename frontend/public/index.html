@@ -4,6 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>[ candy-e ] — Dashboard</title>
+  <!-- base fixe la résolution des chemins relatifs quand serve sert ce fichier
+       comme index de répertoire (/public au lieu de /public/index) -->
+  <base href="/public/" />
 
   <link rel="stylesheet" href="../src/styles/main.css" />
   <script src="./assets/vendor/supabase.min.js"></script>
@@ -35,56 +38,73 @@
   <div class="toast-container" id="toast-container" role="region" aria-label="Notifications" aria-live="polite"></div>
 
   <script type="module">
-    import { initAuth, requireAuth }   from '../src/core/auth.js';
-    import { mountSidebar }            from '../src/layout/sidebar.js';
-    import { mountTopbar }             from '../src/layout/topbar.js';
-    import { mountFooter }             from '../src/layout/footer.js';
-    import { startRouter, route }      from '../src/core/router.js';
-    import { mountDashboard }          from '../src/modules/dashboard/dashboard.js';
-    import { mountPatientList }        from '../src/modules/patient/patient-list.js';
-    import { mountPatientRecord }      from '../src/modules/patient/patient-record.js';
-    import { mountAgenda }             from '../src/modules/agenda/agenda.js';
-    import { mountAdmin }              from '../src/modules/admin/admin.js';
-    import { can }                     from '../src/core/rbac.js';
-    import { getRole, subscribe, addNotification, removeNotification } from '../src/core/state.js';
+    import { initAuth, requireAuth }         from '../src/core/auth.js';
+    import { mountSidebar }                  from '../src/layout/sidebar.js';
+    import { mountTopbar }                   from '../src/layout/topbar.js';
+    import { mountFooter }                   from '../src/layout/footer.js';
+    import { startRouter, route }            from '../src/core/router.js';
+    import { mountDashboard }                from '../src/modules/dashboard/dashboard.js';
+    import { mountPatientList }              from '../src/modules/patient/patient-list.js';
+    import { mountPatientRecord }            from '../src/modules/patient/patient-record.js';
+    import { mountAgenda }                   from '../src/modules/agenda/agenda.js';
+    import { mountAdmin }                    from '../src/modules/admin/admin.js';
+    import { mountTransmissions }            from '../src/modules/transmissions/transmissions.js';
+    import { mountTournee }                  from '../src/modules/tournee/tournee.js';
+    import { mountSoins }                    from '../src/modules/soins/soins.js';
+    import { mountTraitements }              from '../src/modules/traitements/traitements.js';
+    import { subscribe, removeNotification } from '../src/core/state.js';
 
-    // 1. Authentification
-    await initAuth();
-    const ok = await requireAuth();
-    if (!ok) throw new Error('Redirection login');
+    (async () => {
+      // 1. Vérifier l'authentification — si absent, redirige vers login?fresh=1
+      await initAuth();
+      if (!await requireAuth()) return;
 
-    // 2. Shell
-    mountSidebar();
-    mountTopbar();
-    mountFooter();
+      // 2. Monter le shell (sidebar, topbar, footer)
+      mountSidebar();
+      mountTopbar();
+      mountFooter();
 
-    // 3. Système de toasts
-    subscribe('notifications', (notifs) => {
-      const container = document.getElementById('toast-container');
-      if (!container) return;
-      container.innerHTML = notifs.map(n => `
-        <div class="toast toast--${n.type}" data-id="${n.id}">
-          <strong>${n.title}</strong>${n.message ? `<span>${n.message}</span>` : ''}
-        </div>`).join('');
-      container.querySelectorAll('.toast').forEach(t => {
-        setTimeout(() => {
-          removeNotification(t.dataset.id);
-          t.remove();
-        }, 4000);
+      // 3. Toasts
+      subscribe('notifications', (notifs) => {
+        const container = document.getElementById('toast-container');
+        if (!container) return;
+        container.innerHTML = notifs.map(n => `
+          <div class="toast toast--${n.type}" data-id="${n.id}">
+            <strong>${n.title}</strong>${n.message ? `<span>${n.message}</span>` : ''}
+          </div>`).join('');
+        container.querySelectorAll('.toast').forEach(t => {
+          setTimeout(() => { removeNotification(t.dataset.id); t.remove(); }, 4000);
+        });
       });
+
+      // 4. Routes
+      route('tournee',       () => mountTournee(),       { permission: 'tournee.read' });
+      route('transmissions', () => mountTransmissions(), { permission: 'transmission.read' });
+      route('soins',         () => mountSoins(),         { permission: 'soin.read' });
+      route('traitements',   () => mountTraitements(),   { permission: 'traitement.read' });
+      route('dashboard',     () => mountDashboard());
+      route('patients',      () => mountPatientList(),   { permission: 'patient.read' });
+      route('patient',       () => mountPatientRecord(), { permission: 'patient.read' });
+      route('agenda',        () => mountAgenda(),        { permission: 'agenda.read' });
+      route('consultations', () => mountPatientList(),   { permission: 'consultation.read' });
+      route('ordonnances',   () => mountPatientList(),   { permission: 'ordonnance.read' });
+      route('admin',         () => mountAdmin(),         { permission: 'admin.access' });
+
+      // 5. Démarrer le routeur
+      startRouter();
+    })().catch(err => {
+      console.error('[candy-e] Erreur démarrage :', err);
+      const main = document.getElementById('main-content');
+      if (main) main.innerHTML = `
+        <div style="text-align:center;padding:4rem 2rem;">
+          <div style="font-size:3rem;margin-bottom:1rem">⚠️</div>
+          <h2 style="font-size:1.25rem;font-weight:700;margin-bottom:.5rem">Erreur de démarrage</h2>
+          <p style="color:var(--color-text-muted);font-family:monospace;font-size:.8125rem;">${err?.message ?? err}</p>
+          <a href="login.html?fresh=1" style="display:inline-block;margin-top:1.5rem;color:var(--color-primary);">
+            → Retour à la connexion
+          </a>
+        </div>`;
     });
-
-    // 4. Routes
-    route('dashboard',     () => mountDashboard());
-    route('patients',      () => mountPatientList(),   { permission: 'patient.read' });
-    route('patient',       () => mountPatientRecord(), { permission: 'patient.read' });
-    route('agenda',        () => mountAgenda(),        { permission: 'agenda.read' });
-    route('consultations', () => mountPatientList(),   { permission: 'consultation.read' });
-    route('ordonnances',   () => mountPatientList(),   { permission: 'ordonnance.read' });
-    route('admin',         () => mountAdmin(),         { permission: 'admin.access' });
-
-    // 5. Démarrer
-    startRouter();
   </script>
 
 </body>

@@ -140,7 +140,7 @@ async function _loadConsultations() {
 
   const { data } = await supabase
     .from('consultations')
-    .select('id, date_consult, type_acte, titre, patients(nom, prenom), profiles(prenom, nom)')
+    .select('id, date_consult, type_acte, titre, notes, patients(nom, prenom)')
     .order('date_consult', { ascending: false })
     .limit(5);
 
@@ -153,7 +153,7 @@ async function _loadConsultations() {
       <div class="table-wrapper" style="border:none;border-radius:0;box-shadow:none;">
         <table class="table">
           <thead>
-            <tr><th>Date</th><th>Patient</th><th>Type</th><th>Titre</th><th>Médecin</th></tr>
+            <tr><th>Date</th><th>Patient</th><th>Type</th><th>Titre</th><th>Notes</th></tr>
           </thead>
           <tbody>
             ${!data?.length
@@ -165,7 +165,7 @@ async function _loadConsultations() {
                   <td><span class="badge badge--neutral">${c.type_acte}</span></td>
                   <td>${c.titre}</td>
                   <td style="color:var(--color-text-muted);font-size:.8125rem;">
-                    ${c.profiles ? `Dr ${c.profiles.prenom} ${c.profiles.nom}` : '—'}
+                    ${c.notes ? c.notes.slice(0, 60) + (c.notes.length > 60 ? '…' : '') : '—'}
                   </td>
                 </tr>`).join('')}
           </tbody>
