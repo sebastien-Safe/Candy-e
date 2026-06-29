@@ -1,0 +1,43 @@
+name: Déployer sur GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Adapter le base href pour GitHub Pages
+        run: |
+          sed -i 's|<base href="/public/">|<base href="/Candy-e/public/">|g' \
+            frontend/public/index.html
+
+      - name: Configurer GitHub Pages
+        uses: actions/configure-pages@v4
+
+      - name: Envoyer le dossier frontend
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: frontend
+
+      - name: Déployer
+        id: deployment
+        uses: actions/deploy-pages@v4
