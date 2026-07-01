@@ -84,7 +84,8 @@ export async function redirectIfAuthenticated() {
     const { data: { session } } = await supabase.auth.getSession();
     if (!session) return;
     const email = session.user?.email?.toLowerCase() ?? '';
-    if (email === 'emilie@safe-digitalisation.fr') {
+    const DEMO_EMAILS = ['emilie@safe-digitalisation.fr', 'demo@safe-digitalisation.fr'];
+    if (DEMO_EMAILS.includes(email)) {
       window.location.replace('role-select.html');
     } else {
       window.location.replace('index.html');

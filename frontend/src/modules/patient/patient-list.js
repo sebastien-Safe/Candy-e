@@ -286,6 +286,12 @@ function _openRecord(id) {
 let _editingId = null;
 
 async function _openModal(id = null) {
+  if (!id) {
+    window.alert(
+      "ATTENTION, ce logiciel est une démo, ne renseignez aucune donnée personnelle réelle. " +
+      "Vous pouvez créer un patient fictif."
+    );
+  }
   _editingId = id;
   const modal = document.getElementById('patient-modal');
   if (!modal) return;

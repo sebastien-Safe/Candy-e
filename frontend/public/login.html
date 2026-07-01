@@ -219,7 +219,7 @@
       setLoading(true);
       try {
         await login(email, password);
-        const DEMO_EMAILS = ['emilie@safe-digitalisation.fr'];
+        const DEMO_EMAILS = ['emilie@safe-digitalisation.fr', 'demo@safe-digitalisation.fr'];
         if (DEMO_EMAILS.includes(email.toLowerCase())) {
           window.location.href = 'role-select.html';
         } else {
