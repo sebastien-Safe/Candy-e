@@ -25,11 +25,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Adapter le base href pour GitHub Pages
-        run: |
-          sed -i 's|<base href="/public/" />|<base href="/Candy-e/public/" />|g' \
-            frontend/public/index.html
-
       - name: Configurer GitHub Pages
         uses: actions/configure-pages@v4
 
