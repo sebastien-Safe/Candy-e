@@ -501,6 +501,17 @@ async function _saveTournee() {
 
   if (error) { addNotification({ type: 'danger', title: 'Erreur', message: error.message }); return; }
 
+  // Répercute la transmission ciblée saisie dans la tournée vers les Transmissions ciblées
+  if (payload.transmission && payload.transmission !== existing?.transmission) {
+    const def = TOURNEES_DEF.find(d => d.id === type);
+    await supabase.from('transmissions').insert({
+      patient_id: _selectedPatientId,
+      type:       'observation',
+      priorite:   'normale',
+      contenu:    `[${def?.label ?? 'Tournée'}] ${payload.transmission}`,
+    });
+  }
+
   addNotification({ type: 'success', title: 'Tournée enregistrée' });
   modal?.classList.add('hidden');
 
