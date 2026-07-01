@@ -202,5 +202,6 @@ export const PATIENT_TABS = [
   { id: 'soins',        label: 'Soins & Pansements', icon: '🩹', permission: 'soin.read' },
   { id: 'ordonnances',  label: 'Ordonnances',       icon: '📋', permission: 'ordonnance.read' },
   { id: 'notes',        label: 'Notes de suivi',    icon: '💬', permission: 'note.read' },
+  { id: 'transmissions', label: 'Transmissions',    icon: '📣', permission: 'transmission.read' },
   { id: 'documents',    label: 'Documents',         icon: '📁', permission: 'patient.read' },
 ];

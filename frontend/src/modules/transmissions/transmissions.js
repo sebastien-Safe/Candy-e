@@ -35,6 +35,9 @@ export async function mountTransmissions() {
     </div>
 
     <div style="display:flex;gap:var(--space-3);margin-bottom:var(--space-5);flex-wrap:wrap;align-items:center;">
+      <select class="select" id="filter-patient" style="width:200px;">
+        <option value="">Tous les patients</option>
+      </select>
       <select class="select" id="filter-priorite" style="width:160px;">
         <option value="">Toutes priorités</option>
         <option value="critique">🚨 Critique</option>
@@ -116,14 +119,24 @@ export async function mountTransmissions() {
     </div>` : ''}
   `;
 
+  await _loadPatientFilterOptions();
   await _loadTransmissions();
   _bindEvents(canWrite);
+}
+
+async function _loadPatientFilterOptions() {
+  const sel = document.getElementById('filter-patient');
+  if (!sel) return;
+  const { data } = await supabase.from('patients').select('id, nom, prenom').eq('actif', true).order('nom');
+  sel.innerHTML = `<option value="">Tous les patients</option>` +
+    (data ?? []).map(p => `<option value="${p.id}">${formatNomComplet(p.nom, p.prenom)}</option>`).join('');
 }
 
 async function _loadTransmissions() {
   const el = document.getElementById('transmissions-list');
   if (!el) return;
 
+  const patientId = document.getElementById('filter-patient')?.value;
   const priorite  = document.getElementById('filter-priorite')?.value;
   const type      = document.getElementById('filter-type')?.value;
   const nonLus    = document.getElementById('filter-non-lus')?.checked;
@@ -134,9 +147,10 @@ async function _loadTransmissions() {
     .order('created_at', { ascending: false })
     .limit(60);
 
-  if (priorite) query = query.eq('priorite', priorite);
-  if (type)     query = query.eq('type', type);
-  if (nonLus)   query = query.eq('lu', false);
+  if (patientId) query = query.eq('patient_id', patientId);
+  if (priorite)  query = query.eq('priorite', priorite);
+  if (type)      query = query.eq('type', type);
+  if (nonLus)    query = query.eq('lu', false);
 
   const { data, error } = await query;
 
@@ -214,6 +228,7 @@ async function _saveTransmission() {
 }
 
 function _bindEvents(canWrite) {
+  document.getElementById('filter-patient')?.addEventListener('change', _loadTransmissions);
   document.getElementById('filter-priorite')?.addEventListener('change', _loadTransmissions);
   document.getElementById('filter-type')?.addEventListener('change', _loadTransmissions);
   document.getElementById('filter-non-lus')?.addEventListener('change', _loadTransmissions);

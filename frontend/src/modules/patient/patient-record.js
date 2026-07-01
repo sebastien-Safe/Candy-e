@@ -145,6 +145,7 @@ async function _loadTab(tabId, patientId, role) {
     soins:         () => _tabSoins(patientId, role),
     ordonnances:   () => _tabOrdonnances(patientId),
     notes:         () => _tabNotes(patientId, role),
+    transmissions: () => _tabTransmissions(patientId),
     documents:     () => _tabDocuments(patientId),
   };
 
@@ -718,6 +719,53 @@ function _bindNoteEvents(patientId, role) {
     addNotification({ type: 'success', title: 'Note enregistrée' });
     await _loadTab('notes', patientId, role);
   });
+}
+
+// ── Onglet : Transmissions ────────────────────────────────────────────────────
+
+const TRANS_PRIORITE_STYLE = {
+  normale:  { badge: 'badge--neutral', icon: '💬' },
+  urgente:  { badge: 'badge--warning', icon: '⚠️' },
+  critique: { badge: 'badge--danger',  icon: '🚨' },
+};
+
+const TRANS_TYPE_LABELS = {
+  observation: 'Observation',
+  alerte:      'Alerte',
+  consigne:    'Consigne',
+  information: 'Information',
+};
+
+async function _tabTransmissions(id) {
+  const { data } = await supabase
+    .from('transmissions')
+    .select('*')
+    .eq('patient_id', id)
+    .order('created_at', { ascending: false })
+    .limit(60);
+
+  return `
+    <div>
+      ${!data?.length
+        ? `<p style="color:var(--color-text-muted);">Aucune transmission pour ce patient.</p>`
+        : data.map(t => {
+            const ps = TRANS_PRIORITE_STYLE[t.priorite] ?? TRANS_PRIORITE_STYLE.normale;
+            return `
+              <div class="card mb-3" style="${!t.lu ? 'border-left:3px solid var(--color-primary);' : ''}">
+                <div class="card__body" style="padding:var(--space-3) var(--space-4);">
+                  <div style="display:flex;align-items:center;gap:var(--space-2);flex-wrap:wrap;margin-bottom:var(--space-2);">
+                    <span>${ps.icon}</span>
+                    <span class="badge ${ps.badge}">${t.priorite}</span>
+                    <span class="badge badge--neutral">${TRANS_TYPE_LABELS[t.type] ?? t.type}</span>
+                    ${t.cible_role ? `<span class="badge badge--neutral">→ ${t.cible_role}</span>` : ''}
+                    ${!t.lu ? `<span class="badge badge--primary">Nouveau</span>` : ''}
+                  </div>
+                  <p style="font-size:.875rem;margin:0 0 var(--space-2);">${t.contenu}</p>
+                  <div style="font-size:.75rem;color:var(--color-text-muted);">${timeAgo(t.created_at)}</div>
+                </div>
+              </div>`;
+          }).join('')}
+    </div>`;
 }
 
 // ── Onglet : Documents ───────────────────────────────────────────────────────
